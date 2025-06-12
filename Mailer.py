@@ -1,61 +1,42 @@
-import os
-import datetime
-
-from google.auth.transport.requests import Request
-from googleapiclient.discovery import build
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from httpx import HTTPError
 from langchain_core.tools import tool
+from langchain_core.messages import HumanMessage
+from langchain_google_genai import ChatGoogleGenerativeAI
 
-SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
-
+# Define the tool with individual arguments
 @tool
-def read_calender(date: str) -> list:
-    """Read the calendar using the Calendar API and return the events.
-    Takes the date as input and returns a list of events for that date.
-    Returns:
-        list: A list of events from the calendar.
+def create_event(summary: str, start: str, end: str, location: str) -> str:
     """
-    creds=None
-    if os.path.exists("token.json"):
-        creds = Credentials.from_authorized_user_file("token.json", SCOPES)
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                "credentials.json", SCOPES
-            )
-            creds = flow.run_local_server(port=8080)
-    # Save the credentials for the next run
-    with open("token.json", "w") as token:
-        token.write(creds.to_json())
+    Creates a Google Calendar event.
+    Requires: summary, start, end, location.
+    """
+    print("[TOOL CALLED]")
+    print("Event Summary:", summary)
+    print("Start:", start)
+    print("End:", end)
+    print("Location:", location)
+    return "✅ Event created in calendar."
 
-    try:
-        service = build("calendar", "v3", credentials=creds)
-        now=datetime.datetime.now(tz=datetime.timezone.utc).isoformat()
-        print("Getting the upcoming 10 events")
-        events_result = (
-            service.events()
-            .list(
-                calendarId="primary",
-                timeMin=now,
-                maxResults=10,
-                singleEvents=True,
-                orderBy="startTime",
-            )
-            .execute()
-        )
-        events = events_result.get("items", [])
+# Initialize the model
+llm = ChatGoogleGenerativeAI(
+    model="gemini-1.5-flash",
+    temperature=0.7,
+    model_kwargs={
+        "tools": [create_event],
+        "tool_choice": {"function_call": {"name": "create_event"}}
+    }
+)
 
-        if not events:
-            print("No upcoming events found.")
-            return ["No upcoming events found."]
+# Message to trigger tool use
+messages = [
+    HumanMessage(
+        content="Schedule an event titled 'Namaste Jupiverse - Hackathon Edition (HYD)' on June 21st from 10 AM to 10 PM at CoKarma - Coworking Space, Kothaguda, Telangana"
+    )
+]
 
-        return events
-    except HTTPError as e:
-        print(f"An error occurred: {e}")
-        return [f"An error occurred: {e}"]
+# Run model
+response = llm.invoke(messages)
 
-print(read_calender("2023-10-01"))
+# Print result
+print("LLM Content:", response.content)
+if hasattr(response, "tool_calls"):
+    print("Tool Calls:", response.tool_calls)
