@@ -3,12 +3,12 @@ import datetime
 from langchain_core.tools import tool
 from googleapiclient.discovery import build
 
-from ..util import parse_date_string
-from ..auth import check_auth
+from util import parse_date_string
+from auth import check_auth
 
 @tool
 def read_calendar(date_str: str) -> list:
-    """Read calendar events within a date range with enhanced debugging."""
+    """Read cal events within a date range with enhanced debugging."""
     try:
         date, days_before, days_after = parse_date_string(date_str)
     except Exception as e:
@@ -21,7 +21,7 @@ def read_calendar(date_str: str) -> list:
 
 
     try:
-        service = build("calendar", "v3", credentials=creds)
+        service = build("cal", "v3", credentials=creds)
         all_events = []
 
         tz = datetime.timezone(datetime.timedelta(hours=5, minutes=30))
@@ -55,7 +55,7 @@ def read_calendar(date_str: str) -> list:
         for calendar in calendars:
             calendar_id = calendar['id']
             calendar_name = calendar.get('summary', 'Unnamed Calendar')
-            print(f"\nChecking calendar: {calendar_name} ({calendar_id})")
+            print(f"\nChecking cal: {calendar_name} ({calendar_id})")
 
             try:
                 events_result = service.events().list(
@@ -86,7 +86,7 @@ def read_calendar(date_str: str) -> list:
                         'summary': event.get('summary', 'No title'),
                         'start': start,
                         'end': end,
-                        'calendar': calendar_name,
+                        'cal': calendar_name,
                         'date': event_date[:10],
                         'description': event.get('description', '')[:100] + '...' if event.get('description') else '',
                         'location': event.get('location', ''),
@@ -99,7 +99,7 @@ def read_calendar(date_str: str) -> list:
                         print(formatted_event)
 
             except Exception as e:
-                print(f"\nError accessing calendar {calendar_name}: {e}")
+                print(f"\nError accessing cal {calendar_name}: {e}")
                 continue
 
         if not all_events:
@@ -110,7 +110,7 @@ def read_calendar(date_str: str) -> list:
                     'end': (end_date.date()-datetime.timedelta(days=1)).isoformat()
                 },
                 'calendars_checked': len(calendars),
-                'note': 'Try expanding the date range or check if the event exists in another calendar'
+                'note': 'Try expanding the date range or check if the event exists in another cal'
             }]
 
         all_events.sort(key=lambda x: x['date'])

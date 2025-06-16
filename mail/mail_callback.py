@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from AutomatedManager.agent.agent import mailer_agent
+from agent.agent import mailer_agent
 
 
 def email_callback(new_emails):

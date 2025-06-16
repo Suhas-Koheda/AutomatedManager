@@ -5,13 +5,13 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from langchain_core.tools import tool
 
-from AutomatedManager.auth import check_auth
-from AutomatedManager.util import parse_date_string
+from auth import check_auth
+from util import parse_date_string
 
 
 @tool
 def create_event(event_data: Dict[str, Any]) -> Dict[str, Any]:
-    """Create a new calendar event with comprehensive error handling and timezone support.
+    """Create a new cal event with comprehensive error handling and timezone support.
 
     Features:
     - Automatic timezone handling (defaults to UTC+5:30 for India)
@@ -53,7 +53,7 @@ def create_event(event_data: Dict[str, Any]) -> Dict[str, Any]:
                 'summary': 'Event title',
                 'start': 'formatted_start',
                 'end': 'formatted_end',
-                'calendar': 'primary'
+                'cal': 'primary'
             }
         - On error:
             {
@@ -107,7 +107,7 @@ def create_event(event_data: Dict[str, Any]) -> Dict[str, Any]:
 
     # Create the event
     try:
-        service = build("calendar", "v3", credentials=creds)
+        service = build("cal", "v3", credentials=creds)
 
         print(f"\nCreating event with details:")
         for key, value in formatted_event.items():
@@ -128,7 +128,7 @@ def create_event(event_data: Dict[str, Any]) -> Dict[str, Any]:
             'summary': created_event.get('summary'),
             'start': created_event.get('start'),
             'end': created_event.get('end'),
-            'calendar': 'primary'
+            'cal': 'primary'
         }
 
     except HttpError as e:
