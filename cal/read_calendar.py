@@ -21,7 +21,7 @@ def read_calendar(date_str: str) -> list:
 
 
     try:
-        service = build("cal", "v3", credentials=creds)
+        service = build("calendar", "v3", credentials=creds)
         all_events = []
 
         tz = datetime.timezone(datetime.timedelta(hours=5, minutes=30))
