@@ -21,4 +21,6 @@ def email_callback(new_emails):
         if there are any other evets dont to anything
          if there are no events create an event with the details provided in the email 
          send me the link to the event created 
+         You should and have to use tools not just get out easily
+          you should also print a detailed response on what happened 
         """})
