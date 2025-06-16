@@ -11,7 +11,7 @@ from util import parse_date_string
 
 @tool
 def create_event(event_data: Dict[str, Any]) -> Dict[str, Any]:
-    """Create a new cal event with comprehensive error handling and timezone support.
+    """Create a new calendar event with comprehensive error handling and timezone support.
 
     Features:
     - Automatic timezone handling (defaults to UTC+5:30 for India)
@@ -53,7 +53,7 @@ def create_event(event_data: Dict[str, Any]) -> Dict[str, Any]:
                 'summary': 'Event title',
                 'start': 'formatted_start',
                 'end': 'formatted_end',
-                'cal': 'primary'
+                'calendar': 'primary'
             }
         - On error:
             {
@@ -107,7 +107,7 @@ def create_event(event_data: Dict[str, Any]) -> Dict[str, Any]:
 
     # Create the event
     try:
-        service = build("cal", "v3", credentials=creds)
+        service = build("calendar", "v3", credentials=creds)
 
         print(f"\nCreating event with details:")
         for key, value in formatted_event.items():
@@ -128,7 +128,7 @@ def create_event(event_data: Dict[str, Any]) -> Dict[str, Any]:
             'summary': created_event.get('summary'),
             'start': created_event.get('start'),
             'end': created_event.get('end'),
-            'cal': 'primary'
+            'calendar': 'primary'
         }
 
     except HttpError as e:

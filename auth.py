@@ -29,10 +29,10 @@ def check_auth():
             )
 
             # Generate the authorization URL
-            auth_url, _ = flow.authorization_url(prompt='consent')
+            auth_url, _ = flow.authorization_url(prompt='consent') # <--- This line generates the URL
 
             print('Please visit this URL to authorize this application:')
-            print(auth_url)
+            print(auth_url) # <--- This line prints the URL
 
             # Get the authorization code from the user
             code = input('Enter the authorization code: ')

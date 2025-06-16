@@ -8,7 +8,7 @@ from auth import check_auth
 
 @tool
 def read_calendar(date_str: str) -> list:
-    """Read cal events within a date range with enhanced debugging."""
+    """Read calendar events within a date range with enhanced debugging."""
     try:
         date, days_before, days_after = parse_date_string(date_str)
     except Exception as e:
@@ -86,7 +86,7 @@ def read_calendar(date_str: str) -> list:
                         'summary': event.get('summary', 'No title'),
                         'start': start,
                         'end': end,
-                        'cal': calendar_name,
+                        'calendar': calendar_name,
                         'date': event_date[:10],
                         'description': event.get('description', '')[:100] + '...' if event.get('description') else '',
                         'location': event.get('location', ''),
